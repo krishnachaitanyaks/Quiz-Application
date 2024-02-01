@@ -53,6 +53,6 @@ jobs:
         uses: aws-actions/amazon-ecs-deploy-task-definition@v1
         with:
           task-definition: ${{ steps.task-def.outputs.task-definition }}
-          service: Quiz_application
-          cluster: cluster1
-          wait-for-service-stability: true
+          service: quiz-app
+          cluster: dev-quiz
+          
