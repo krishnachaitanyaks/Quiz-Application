@@ -55,6 +55,3 @@ jobs:
           task-definition: ${{ steps.task-def.outputs.task-definition }}
           service: quiz-app
           cluster: dev-quiz
-		  
-          
-	
