@@ -47,8 +47,8 @@ jobs:
           task-definition: task-definition.json
           container-name: quiz-app-container
           image: ${{ steps.build-image.outputs.image }}
-	 - name: Debug
-       run: echo "Docker Image: ${{ steps.build-image.outputs.image }}"
+	  - name: Debug
+        run: echo "Docker Image: ${{ steps.build-image.outputs.image }}"
 
 
       - name: Deploy Amazon ECS task definition
