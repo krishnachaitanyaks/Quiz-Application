@@ -10,18 +10,20 @@ jobs:
     steps:
       - name: Checkout source
         uses: actions/checkout@v3
+
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v3
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: 'ap-south-1'
+
       - name: Login to Amazon ECR
         id: login-ecr
         uses: aws-actions/amazon-ecr-login@v1
         with:
           mask-password: 'true'
-          
+
       - name: Build, tag, and push image to Amazon ECR
         id: build-image
         env:
@@ -29,29 +31,45 @@ jobs:
           IMAGE_TAG: ${{ github.sha }}
           REPOSITORY: task1
         run: |
-          # Build a docker container and
-          # push it to ECR so that it can
-          # be deployed to ECS.
           docker build -t $ECR_REGISTRY/$REPOSITORY:$IMAGE_TAG .
           docker push $ECR_REGISTRY/$REPOSITORY:$IMAGE_TAG
-          echo "image=$ECR_REGISTRY/$REPOSITORY:$IMAGE_TAG" >> $GITHUB_OUTPUT    
-      
+          echo "image=$ECR_REGISTRY/$REPOSITORY:$IMAGE_TAG" >> $GITHUB_OUTPUT
+
       - name: Download task definition
         run: |
           aws ecs describe-task-definition --task-definition ${{ secrets.TASK_DEFINTION_NAME }} \
           --query taskDefinition > task-definition.json
-     
+		  
+		  
+
       - name: Fill in the new image ID in the Amazon ECS task definition
         id: task-def
         uses: aws-actions/amazon-ecs-render-task-definition@v1
         with:
           task-definition: task-definition.json
           container-name: quiz-app-container
-          image: ${{ steps.build-image.outputs.image }}    
-     
+          image: ${{ steps.build-image.outputs.image }}
+	 
+
+
       - name: Deploy Amazon ECS task definition
         uses: aws-actions/amazon-ecs-deploy-task-definition@v1
+        id: deploy
         with:
           task-definition: ${{ steps.task-def.outputs.task-definition }}
           service: quiz-app
           cluster: dev-quiz
+
+      - name: Notify on Success using SNS
+        if: success()
+        run: |
+          aws sns publish --topic-arn arn:aws:sns:ap-south-1:022608205880:quiz-app \
+            --message "Deployment of quiz-app was successful!"
+            --region 'ap-south-1'
+            
+      - name: Notify on Failure using SNS
+        if: failure()
+        run: |
+          aws sns publish --topic-arn arn:aws:sns:ap-south-1:022608205880:quiz-app \
+            --message "Deployment of quiz-app failed!"
+            --region 'ap-south-1'
