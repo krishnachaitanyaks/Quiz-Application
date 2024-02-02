@@ -59,13 +59,13 @@ jobs:
       - name: Notify on Success using SNS
         if: success()
         run: |
-          aws sns publish --topic-arn arn:aws:sns:ap-south-1:022608205880:quiz-app.fifo \
+          aws sns publish --topic-arn arn:aws:sns:ap-south-1:022608205880:quiz-app \
             --message "Deployment of quiz-app was successful!"
             --region 'ap-south-1'
             
       - name: Notify on Failure using SNS
         if: failure()
         run: |
-          aws sns publish --topic-arn arn:aws:sns:ap-south-1:022608205880:quiz-app.fifo \
+          aws sns publish --topic-arn arn:aws:sns:ap-south-1:022608205880:quiz-app \
             --message "Deployment of quiz-app failed!"
             --region 'ap-south-1'
