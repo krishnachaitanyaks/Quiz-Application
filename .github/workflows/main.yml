@@ -59,9 +59,9 @@ jobs:
         if: success()
         run: |
           aws sns publish --topic-arn arn:aws:sns:ap-south-1:022608205880:quiz-app \
-            --message "Deployment of quiz-app was successful!"
+            --message "Deployment of quiz-app was successful!" \
             --region 'ap-south-1'
-            
+             
       - name: Notify on Failure using SNS
         if: failure()
         run: |
