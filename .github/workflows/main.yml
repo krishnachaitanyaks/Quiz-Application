@@ -47,12 +47,15 @@ jobs:
           task-definition: task-definition.json
           container-name: quiz-app-container
           image: ${{ steps.build-image.outputs.image }}
+	 - name: Debug
+       run: echo "Docker Image: ${{ steps.build-image.outputs.image }}"
+
 
       - name: Deploy Amazon ECS task definition
         uses: aws-actions/amazon-ecs-deploy-task-definition@v1
         id: deploy
         with:
-          task-definition: ${{ steps.dev.outputs.task-definition }}
+          task-definition: ${{ steps.task-def.outputs.task-definition }}
           service: quiz-app
           cluster: dev-quiz
 
