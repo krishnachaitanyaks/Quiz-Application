@@ -54,9 +54,8 @@ jobs:
         with:
           task-definition: ${{ steps.task-def.outputs.task-definition }}
           service: quiz-app
-          cluster: dev-quiz
-		  
-	  - name: Notify on Success using SNS
+          cluster: dev-quiz  
+      - name: Notify on Success using SNS
         if: success()
         run: |
           aws sns publish --topic-arn arn:aws:sns:ap-south-1:022608205880:quiz-app \
