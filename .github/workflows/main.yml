@@ -52,7 +52,7 @@ jobs:
         uses: aws-actions/amazon-ecs-deploy-task-definition@v1
         id: deploy
         with:
-          task-definition: ${{ steps.task-def.outputs.task-definition }}
+          task-definition: ${{ steps.dev.outputs.task-definition }}
           service: quiz-app
           cluster: dev-quiz
 
